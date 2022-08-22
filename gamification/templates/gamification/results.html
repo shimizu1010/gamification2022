@@ -6,4 +6,20 @@
 {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">もう一度、答える?</a>
+<h2>
+  {% if question.choice_set.all.0.votes >  question.choice_set.all.1.votes %}
+    <tr>
+      {{ question.choice_set.all.0 }}が多数派です。
+    </tr>
+  {% elif question.choice_set.all.0.votes < question.choice_set.all.1.votes %}
+    <tr>
+      {{ question.choice_set.all.1 }}が多数派です。
+    </tr>
+  {% else %}
+    <tr>
+      {{ question.choice_set.all.0 }}と{{ question.choice_set.all.1 }}は同じくらいです。
+    </tr>
+  {% endif %}
+  </h2>
+
+<a href="{% url 'gamification:detail' question.id|add:'1' %}">次の質問</a>

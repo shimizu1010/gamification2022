@@ -1,5 +1,3 @@
-#ここではページを定義している
-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -14,7 +12,7 @@ class IndexView(generic.ListView):
   context_object_name = 'latest_question_list'
 
   def get_queryset(self):
-    return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+    return Question.objects.filter(pub_date__lte=timezone.now()).order_by('pub_date')
 
 class DetailView(generic.DetailView):
   model = Question
@@ -24,7 +22,7 @@ class DetailView(generic.DetailView):
     return Question.objects.filter(pub_date__lte=timezone.now())
 
 class ResultsView(generic.DetailView):
-  model =Question
+  model = Question
   template_name = 'gamification/results.html'
 
 def vote(request, question_id):
@@ -32,8 +30,8 @@ def vote(request, question_id):
   try:
     selected_choice = question.choice_set.get(pk=request.POST['choice'])
   except (KeyError, Choice.DoesNotExist):
-    return render(request, 'gamification/detail.html',{'question':question, 'error_message':'選択肢を選んでいない'}) 
+    return render(request, 'gamification/detail.html',{'question':question, 'error_message':'選択肢を選んでください'}) 
   else:
     selected_choice.votes += 1
     selected_choice.save()
-    return HttpResponseRedirect(reverse('gamification:results', args=(question.id)))
+    return HttpResponseRedirect(reverse('gamification:results', args=(question.id,)))
